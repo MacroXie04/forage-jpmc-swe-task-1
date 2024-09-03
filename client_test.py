@@ -1,24 +1,53 @@
 import unittest
 from client3 import getDataPoint
 
+
 class ClientTest(unittest.TestCase):
-  def test_getDataPoint_calculatePrice(self):
-    quotes = [
-      {'top_ask': {'price': 121.2, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
-      {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
-    ]
-    """ ------------ Add the assertion below ------------ """
+    def test_getDataPoint_calculatePrice(self):
+        quotes = [
+            {'top_ask': {'price': 121.2, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453',
+             'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
+            {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453',
+             'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+        ]
+        """ ------------ Add the assertion below ------------ """
+        results = [getDataPoint(quote) for quote in quotes]
+        expected_results = [
+            ('ABC', 120.48, 121.2, (120.48 + 121.2) / 2),
+            ('DEF', 117.87, 121.68, (117.87 + 121.68) / 2)
+        ]
+        self.assertEqual(results, expected_results)
 
-  def test_getDataPoint_calculatePriceBidGreaterThanAsk(self):
-    quotes = [
-      {'top_ask': {'price': 119.2, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
-      {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
-    ]
-    """ ------------ Add the assertion below ------------ """
 
+    def test_getDataPoint_calculatePriceBidGreaterThanAsk(self):
+        quotes = [
+            {'top_ask': {'price': 119.2, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453',
+             'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
+            {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453',
+             'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+        ]
+        """ ------------ Add the assertion below ------------ """
+        results = [getDataPoint(quote) for quote in quotes]
+        expected_results = [
+            ('ABC', 120.48, 119.2, (120.48 + 119.2) / 2),
+            ('DEF', 117.87, 121.68, (117.87 + 121.68) / 2)
+        ]
+        self.assertEqual(results, expected_results)
 
-  """ ------------ Add more unit tests ------------ """
-
+    """ ------------ Add more unit tests ------------ """
+    def test_getDataPoint_invalidQuotes(self):
+        quotes = [
+            {'top_ask': {'price': None, 'size': 0}, 'timestamp': '2019-02-11 22:06:30.572453',
+             'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
+            {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453',
+             'top_bid': {'price': None, 'size': 0}, 'id': '0.109974697771', 'stock': 'DEF'}
+        ]
+        results = [getDataPoint(quote) for quote in quotes]
+        expected_results = [
+            ('ABC', 120.48, None, None),
+            ('DEF', None, 121.68, None)
+        ]
+        self.assertEqual(results, expected_results)
 
 
 if __name__ == '__main__':
